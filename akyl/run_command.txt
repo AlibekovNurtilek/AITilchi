@@ -1,0 +1,8 @@
+python aitilchi.py kyrgyz-ud-model   --train my_corpus/train.conllu   --dev my_corpus/dev.conllu   --test my_corpus/test.conllu   --rnn_cell_dim 256   --batch_size 16   --epochs 50:0.001   --word_dropout 0.2   --dropout 0.3   --parse 0
+
+nurtilek@pc:~/Desktop/udpipe1/src$ ./udpipe --train kyrgyz.tokenizer   --tokenizer="dimension=64;epochs=10;initialization_range=0.1;batch_size=50"   /home/nurtilek/Desktop/udpipe/my_corpus/for_tokenize.conllu
+
+
+
+python aitilchi.py kyrgyz-ud-model --predict --predict_input input.conllu --predict_output output.conllu
+python aitilchi.py kyrgyz-ud-model --predict --predict_input /home/nurtilek/Desktop/AITilchi/branch_shorm/input.conllu --predict_output /home/nurtilek/Desktop/AITilchi/branch_shorm/output.conllu
