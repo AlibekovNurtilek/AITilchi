@@ -1,16 +1,24 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import WelcomeScreen from './components/WelcomeScreen';
+import './App.css';
 
-function App() {
-  const [count, setCount] = useState(0)
-
+function HomePage() {
   return (
-    <h1 className="text-3xl font-bold underline text-red-500">
-      Hello world!
-    </h1>
-  )
+    <div className="h-screen flex items-center justify-center bg-white text-black">
+      <h2 className="text-3xl font-bold">This is the Home Page</h2>
+    </div>
+  );
 }
 
-export default App
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<WelcomeScreen />} />
+        <Route path="/home" element={<HomePage />} />
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
