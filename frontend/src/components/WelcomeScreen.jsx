@@ -48,29 +48,29 @@ const WelcomeScreen = () => {
       </div>
 
       {/* Контент */}
-      <div className="relative z-20 h-full w-full flex flex-col items-center justify-center">
-        <div className="text-center transform transition-all duration-1000 animate-fadeIn">
-          <h1 className="text-7xl font-bold text-white tracking-tight">
+      <div className="relative z-20 h-full w-full flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
+        <div className="text-center transform transition-all duration-1000 animate-fadeIn max-w-4xl mx-auto">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-tight">
             <TypewriterText 
               text="AITilchi'ге кош келиңиз!"
               highlightWord="AI"
-              className="text-7xl font-bold text-white tracking-tight"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-tight"
             />
           </h1>
-          <p className="mt-4 text-xl text-gray-300 animate-pulse">
+          <p className="mt-3 sm:mt-4 text-base sm:text-lg md:text-xl text-gray-300 animate-pulse max-w-2xl mx-auto">
             <TypewriterText 
               text="Кыргыз грамматикасына багытталган биринчи тилдик AI" 
               className="inline-block font-bold"
-              delay={40}
+              delay={30}
             />
           </p>
           <button
             onClick={handleGetStarted}
-            className="mt-8 px-8 py-3 bg-red-600 text-white rounded-full 
+            className="mt-6 sm:mt-8 px-6 sm:px-8 py-2 sm:py-3 bg-red-600 text-white rounded-full 
                      transform transition-all duration-300 
                      hover:bg-red-500 hover:scale-105 
                      focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50
-                     shadow-lg hover:shadow-red-500/25 text-xl font-bold"
+                     shadow-lg hover:shadow-red-500/25 text-lg sm:text-xl font-bold"
           >
             Баштоо
           </button>

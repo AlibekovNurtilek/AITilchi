@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const TypewriterText = ({ text, highlightWord = "", className = "", delay = 80 }) => {
+const TypewriterText = ({ text, highlightWord = "", className = "", delay = 60 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
