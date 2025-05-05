@@ -50,13 +50,12 @@ const WelcomeScreen = () => {
       {/* Контент */}
       <div className="relative z-20 h-full w-full flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
         <div className="text-center transform transition-all duration-1000 animate-fadeIn max-w-4xl mx-auto">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-tight">
-            <TypewriterText 
-              text="AITilchi'ге кош келиңиз!"
-              highlightWord="AI"
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-tight"
-            />
-          </h1>
+        <h1 className="text-center text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-tight">
+  <span className="text-red-600">AI</span>
+  <span className="max-[299px]:block inline">Tilchi'ге </span>
+  <span className="max-[299px]:block inline">кош келиңиз!</span>
+</h1>
+
           <p className="mt-3 sm:mt-4 text-base sm:text-lg md:text-xl text-gray-300 animate-pulse max-w-2xl mx-auto">
             <TypewriterText 
               text="Кыргыз грамматикасына багытталган биринчи тилдик AI" 
