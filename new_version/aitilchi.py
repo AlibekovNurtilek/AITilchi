@@ -157,7 +157,8 @@ class AITilchi:
             self.predictions_feats = {}
             self.predictions_feats_logits = {}
 
-            for i, category in enumerate(sorted(train.FEATURE_CATEGORIES.keys())):
+            for i, category in enumerate(train.FEATURE_CATEGORIES.keys()):
+                num_classes = len(train.FEATURE_CATEGORIES[category])  # <--- ТУТ правильно устанавливаем число классов
                 with tf.variable_scope(f"feats_{category.lower()}"):
                     feat_layer = tag_hidden_layer  # вход: [batch, length, rnn_dim]
 
@@ -168,7 +169,7 @@ class AITilchi:
                             rate=args.dropout, training=self.is_training)
 
                     # Финальный слой на количество классов в категории
-                    output_layer = tf.layers.dense(feat_layer, len(train.FEATURE_CATEGORIES[category]))
+                    output_layer = tf.layers.dense(feat_layer, num_classes)
 
                     # Сохраняем логиты и предсказания
                     self.predictions_feats_logits[category] = output_layer
@@ -178,6 +179,7 @@ class AITilchi:
                     gold_targets = self.feats_targets[:, :, i]  # [batch, length] для этой категории
                     loss += tf.losses.sparse_softmax_cross_entropy(
                         gold_targets, output_layer, weights=weights)
+
 
             # Parsing
             if args.parse:
@@ -578,6 +580,13 @@ class AITilchi:
         args.epochs = [(int(epochs), float(lr)) for epochs, lr in (epochs_lr.split(":") for epochs_lr in args.epochs.split(","))]
 
 
+def count_total_feats(feats_map):
+    total = 0
+    for key, value in feats_map.items():
+        if isinstance(value, dict):
+            total += len(value)
+    return total
+
 if __name__ == "__main__":
     import collections
     import glob
@@ -631,6 +640,7 @@ if __name__ == "__main__":
     network = AITilchi(threads=args.threads, seed=args.seed)
     network.construct(args, train, devs, tests, predict_only=args.predict)
 
+    print("Network constructed succesfully")
     if args.predict:
         network.load(args.model, args.morphodita)
         conllu = network.predict(test, False, args)
@@ -639,12 +649,15 @@ if __name__ == "__main__":
     else:
         log_files = [open(os.path.join(args.model, "log"), "w", encoding="utf-8"), sys.stderr]
         for log_file in log_files:
-            for tag in args.tags + ["DEPREL"]:
-                print("{}: {}".format(tag, len(train.factors[train.FACTORS_MAP[tag]].words)), file=log_file, flush=True)
+            for tag in args.tags + ["DEPREL"]:  
+                if tag == "FEATS":
+                    total_feats = count_total_feats(train.factors[train.FACTORS_MAP["FEATS"]].words_map)
+                    print("{}: {}".format(tag, total_feats), file=log_file, flush=True)
+                else: print("{}: {}".format(tag, len(train.factors[train.FACTORS_MAP[tag]].words)), file=log_file, flush=True)  
             print("VARIANT: {}".format(train.variants), file=log_file, flush=True)
             print("Parsing with args:", *["{}: {}".format(key, value) for key, value in sorted(vars(args).items())],
                   sep="\n", file=log_file, flush=True)
-
+        print("Log file writed succesfully")
         for i, (epochs, learning_rate) in enumerate(args.epochs):
             for epoch in range(epochs):
                 network.train_epoch(train, learning_rate, args)

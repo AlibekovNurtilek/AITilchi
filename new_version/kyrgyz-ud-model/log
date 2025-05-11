@@ -1,7 +1,7 @@
-UPOS: 10
-XPOS: 10
-FEATS: 3
-LEMMAS: 7
+UPOS: 21
+XPOS: 34
+FEATS: 62
+LEMMAS: 590
 DEPREL: 4
 VARIANT: 1
 Parsing with args:
@@ -12,7 +12,7 @@ cle_dim: 256
 clip_gradient: 2.0
 dev: ['my_corpus/dev.conllu']
 dropout: 0.3
-epochs: [(50, 0.001)]
+epochs: [(10, 0.001)]
 exp: None
 label_smoothing: 0.03
 max_sentence_len: 120
@@ -41,3 +41,14 @@ variant_dim: 128
 we_dim: 512
 wembedding_model: bert-base-multilingual-uncased-last4
 word_dropout: 0.2
+Dev  epoch 1, lr 0.001, UPOS: 82.41, XPOS: 82.27, UFeats: 61.13, AllTags: 55.68, Lemmas: 73.17, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00
+Dev  epoch 2, lr 0.001, UPOS: 86.38, XPOS: 86.15, UFeats: 69.89, AllTags: 65.72, Lemmas: 81.56, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00
+Dev  epoch 3, lr 0.001, UPOS: 88.67, XPOS: 88.66, UFeats: 74.58, AllTags: 70.74, Lemmas: 85.12, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00
+Dev  epoch 4, lr 0.001, UPOS: 89.12, XPOS: 88.99, UFeats: 76.24, AllTags: 72.61, Lemmas: 85.99, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00
+Dev  epoch 5, lr 0.001, UPOS: 89.66, XPOS: 89.47, UFeats: 76.67, AllTags: 73.19, Lemmas: 87.25, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00
+Dev  epoch 6, lr 0.001, UPOS: 90.01, XPOS: 89.88, UFeats: 77.93, AllTags: 74.36, Lemmas: 87.61, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00
+Dev  epoch 7, lr 0.001, UPOS: 90.21, XPOS: 90.14, UFeats: 77.96, AllTags: 74.75, Lemmas: 88.47, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00
+Dev  epoch 8, lr 0.001, UPOS: 90.20, XPOS: 90.01, UFeats: 78.18, AllTags: 74.91, Lemmas: 88.25, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00
+Dev  epoch 9, lr 0.001, UPOS: 90.39, XPOS: 90.33, UFeats: 78.25, AllTags: 75.01, Lemmas: 88.70, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00
+Dev  epoch 10, lr 0.001, UPOS: 90.34, XPOS: 90.30, UFeats: 79.06, AllTags: 75.94, Lemmas: 88.57, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00
+Test  epoch 10, lr 0.001, UPOS: 91.25, XPOS: 91.22, UFeats: 78.90, AllTags: 76.30, Lemmas: 88.83, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00

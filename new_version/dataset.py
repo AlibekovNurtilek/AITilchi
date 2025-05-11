@@ -333,7 +333,7 @@ class Dataset:
         batch_word_ids = []
         feats_index = self.FEATS
         feats_factor = self._factors[self.FEATS]
-        feats_category_count = len(feats_factor.word_ids[0][0]) if feats_factor.word_ids[0] else 13
+        feats_category_count = len(feats_factor.word_ids[0][0]) if len(feats_factor.word_ids[0]) > 0 else 13
 
         for f, factor in enumerate(self._factors):
             if f == self.FEATS:
