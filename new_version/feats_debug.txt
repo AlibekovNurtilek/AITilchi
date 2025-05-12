@@ -1,0 +1,47 @@
+=== FEATS WORDS MAP ===
+<pad> -> 0
+<unk> -> 1
+<root> -> 2
+Case -> {'None': 0, 'Nom': 1, 'Gen': 2, 'Dat': 3, 'Acc': 4, 'Loc': 5, 'Abl': 6}
+Number -> {'None': 0, 'Sing': 1, 'Plur': 2, 'X': 3}
+Poss -> {'None': 0, 'Yes': 1, 'No': 2}
+PronType -> {'None': 0, 'Prs': 1, 'Dem': 2, 'Int': 3, 'Neg': 4, 'Def': 5, 'Ind': 6}
+Form -> {'None': 0, 'A': 1, 'B': 2, 'C': 3, 'D': 4}
+Tense -> {'None': 0, 'Pres': 1, 'Past': 2, 'Fut': 3}
+Person -> {'None': 0, '1': 1, '2': 2, '3': 3}
+Mood -> {'None': 0, 'Imp': 1, 'Cnd': 2, 'Pot': 3, 'PotDes': 4, 'Ind': 5}
+Polarity -> {'None': 0, 'Neg': 1, 'Pos': 2}
+Voice -> {'None': 0, 'Act': 1, 'Rcp': 2, 'Mid': 3, 'Pass': 4, 'Cau': 5}
+
+=== FEATS WORDS LIST ===
+0: <pad>
+1: <unk>
+2: <root>
+
+=== FEATS STRINGS ===
+Sentence 0:
+  Case=Nom|Number=Sing|Poss=No
+  Case=Loc|Number=Sing|Poss=Yes
+  _
+  Case=Nom|Number=Sing|PronType=Dem
+  Case=Acc|Number=Sing|Poss=No
+  Form=B
+  Case=Nom|Number=Sing
+  Case=Nom|Number=Plur
+  _
+  Tense=Pres|Person=3|Number=Sing|Mood=Ind|Polarity=Pos|Voice=Act
+  _
+
+=== FEATS WORD_IDS (tuple form) ===
+Sentence 0:
+  (1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+  (5, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+  (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+  (1, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+  (4, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+  (0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0)
+  (1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+  (1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+  (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+  (0, 1, 0, 0, 0, 0, 0, 1, 3, 5, 2, 1, 0)
+  (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)

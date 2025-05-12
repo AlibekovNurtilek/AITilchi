@@ -1,0 +1,24 @@
+# sent_id = 885
+# text = Шопоков шаарындагы шире чыгаруучу завод модернизацияланып , кубаттуулугу жогорулады .
+1	Шопоков	Шопоков	PROPN	propn	Case=Nom|Number=Sing	_	_	_	_
+2	шаарындагы	шаар	ADJ	adj	Form=A	_	_	_	_
+3	шире	шире	NOUN	noun	Case=Nom|Number=Sing	_	_	_	_
+4	чыгаруучу	чыгар	X	atooch	Case=Nom|Number=Sing	_	_	_	_
+5	завод	завод	NOUN	noun	Case=Nom|Number=Sing	_	_	_	_
+6	модернизацияланып	модернизацияла	VERB	verb	VerbForms=B	_	_	_	_
+7	,	,	PUNCT	punct		_	_	_	_
+8	кубаттуулугу	кубаттуулук	NOUN	noun	Case=Nom|Number=Sing|Poss=Yes	_	_	_	_
+9	жогорулады	жогорула	VERB	verb	Mood=Ind|Polarity=Pos|Tense=Past	_	_	_	_
+10	.	.	PUNCT	punct		_	_	_	_
+
+# sent_id = 176
+# text = Лотереянын экинчи утушу 2022-жылдын октябрь айында болот .
+1	Лотереянын	лотерея	NOUN	noun	Case=Gen|Number=Sing|Poss=No	_	_	_	_
+2	экинчи	экинчи	NUM	num	NumType=Ord	_	_	_	_
+3	утушу	утуш	X	ktooch	Case=Nom|Number=Sing|Poss=Yes	_	_	_	_
+4	2022-жылдын	2022-жыл	ADV	adv	Form=A	_	_	_	_
+5	октябрь	октябрь	NOUN	noun	Case=Nom|Number=Sing|Poss=No	_	_	_	_
+6	айында	ай	NOUN	noun	Case=Loc|Number=Sing|Poss=Yes	_	_	_	_
+7	болот	бол	VERB	verb	Tense=Fut|Person=3|Number=Sing|Mood=Ind|Polarity=Pos|Voice=Act	_	_	_	_
+8	.	.	PUNCT	punct		_	_	_	_
+

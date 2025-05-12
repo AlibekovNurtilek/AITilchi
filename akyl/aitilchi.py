@@ -280,10 +280,11 @@ class AITilchi:
         # because it works even TF 2 is in Eager mode.
         self.session.run(self.saver.saver_def.restore_op_name,
                          {self.saver.saver_def.filename_tensor_name: os.path.join(path, "weights")})
-
+        print("bbbbbbbbb")
         # Try loading also consistent feats table.
         consistent_feats_table = os.path.join(path, "consistent_feats.table")
         if os.path.exists(consistent_feats_table):
+            print("aaaaaaa")
             import gzip
             with gzip.open(consistent_feats_table, "rb") as consistent_feats_table_file:
                 consistent_feats_table = np.load(consistent_feats_table_file)
