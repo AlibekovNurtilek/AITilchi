@@ -22,11 +22,26 @@ tf.logging.set_verbosity(tf.logging.ERROR)
 # Игнорим варнинги типа "is deprecated"
 warnings.filterwarnings("ignore", message=".*is deprecated")
 
-
+FEATURE_CATEGORIES = {
+    "Case": ["None", "Nom", "Gen", "Dat", "Acc", "Loc", "Abl"],
+    "Number": ["None", "Sing", "Plur", "X"],
+    "Poss": ["None", "Yes", "No"],
+    "PronType": ["None", "Prs", "Dem", "Int", "Neg", "Def", "Ind"],
+    "Degree": ["None", "Pos", "Comp", "Superl"],
+    "Form": ["None", "A", "B", "C", "D"],
+    "NumType": ["None", "Card", "Ord", "Set", "App", "Mult", "Frac"],
+    "Tense": ["None", "Pres", "Past", "Fut"],
+    "Person": ["None", "1", "2", "3"],
+    "Mood": ["None", "Imp", "Cnd", "Pot", "PotDes", "Ind"],
+    "Polarity": ["None", "Neg", "Pos"],
+    "Voice": ["None", "Act", "Rcp", "Mid", "Pass", "Cau"],
+    "VerbForms": ["None", "B"]
+    }
 class AITilchi:
 
 
     METRICS = ["UPOS", "XPOS", "UFeats", "AllTags", "Lemmas", "UAS", "LAS", "CLAS", "MLAS", "BLEX"]
+    METRICS += [f"FEATS_{cat}" for cat in FEATURE_CATEGORIES.keys()]
     NUM_OF_FEATS = 13
 
     def __init__(self, threads, seed=42):
@@ -280,7 +295,7 @@ class AITilchi:
                     self.training_summaries.append(tf.contrib.summary.scalar("train/gradient_norm", gradient_norm))
                 for tag in args.tags:
                     if tag == "FEATS":
-                        for i, category in enumerate(sorted(train.FEATURE_CATEGORIES.keys())):
+                        for i, category in enumerate(train.FEATURE_CATEGORIES.keys()):
                             acc = tf.reduce_sum(
                                 tf.cast(tf.equal(self.feats_targets[:, :, i], self.predictions_feats[category]), tf.float32) * weights
                             ) / weights_sum
@@ -517,13 +532,15 @@ class AITilchi:
 
     def evaluate(self, dataset_name, dataset, args):
         import io
-
         conllu = self.predict(dataset.data, True, args)
         metrics = eval.evaluate(dataset.gold, eval.load_conllu(io.StringIO(conllu), args.single_root))
+        for key in sorted(metrics):
+            if key.startswith("FEATS_"):
+                score = metrics[key]
+                print(f"{key:15} — F1: {score.f1:.2%}, Precision: {score.precision:.2%}, Recall: {score.recall:.2%}")
         event = [tf.Summary.Value(tag="{}/{}".format(dataset_name, metric), simple_value=metrics[metric].f1) for metric in self.METRICS]
         event = tf.Event(summary=tf.Summary(value=event), step=self.session.run(self.global_step), wall_time=time.time()).SerializeToString()
         self.session.run(self.event_summaries[dataset.label], {self.event: event})
-
         if args.parse:
             return (metrics["LAS"].f1 + metrics["MLAS"].f1 + metrics["BLEX"].f1) / 3., metrics
         else:
@@ -640,7 +657,6 @@ if __name__ == "__main__":
     network = AITilchi(threads=args.threads, seed=args.seed)
     network.construct(args, train, devs, tests, predict_only=args.predict)
 
-    print("Network constructed succesfully")
     if args.predict:
         network.load(args.model, args.morphodita)
         conllu = network.predict(test, False, args)
@@ -657,7 +673,6 @@ if __name__ == "__main__":
             print("VARIANT: {}".format(train.variants), file=log_file, flush=True)
             print("Parsing with args:", *["{}: {}".format(key, value) for key, value in sorted(vars(args).items())],
                   sep="\n", file=log_file, flush=True)
-        print("Log file writed succesfully")
         for i, (epochs, learning_rate) in enumerate(args.epochs):
             for epoch in range(epochs):
                 network.train_epoch(train, learning_rate, args)

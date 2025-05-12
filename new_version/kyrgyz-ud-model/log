@@ -12,7 +12,7 @@ cle_dim: 256
 clip_gradient: 2.0
 dev: ['my_corpus/dev.conllu']
 dropout: 0.3
-epochs: [(10, 0.001)]
+epochs: [(12, 0.001)]
 exp: None
 label_smoothing: 0.03
 max_sentence_len: 120
@@ -41,14 +41,14 @@ variant_dim: 128
 we_dim: 512
 wembedding_model: bert-base-multilingual-uncased-last4
 word_dropout: 0.2
-Dev  epoch 1, lr 0.001, UPOS: 82.41, XPOS: 82.27, UFeats: 61.13, AllTags: 55.68, Lemmas: 73.17, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00
-Dev  epoch 2, lr 0.001, UPOS: 86.38, XPOS: 86.15, UFeats: 69.89, AllTags: 65.72, Lemmas: 81.56, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00
-Dev  epoch 3, lr 0.001, UPOS: 88.67, XPOS: 88.66, UFeats: 74.58, AllTags: 70.74, Lemmas: 85.12, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00
-Dev  epoch 4, lr 0.001, UPOS: 89.12, XPOS: 88.99, UFeats: 76.24, AllTags: 72.61, Lemmas: 85.99, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00
-Dev  epoch 5, lr 0.001, UPOS: 89.66, XPOS: 89.47, UFeats: 76.67, AllTags: 73.19, Lemmas: 87.25, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00
-Dev  epoch 6, lr 0.001, UPOS: 90.01, XPOS: 89.88, UFeats: 77.93, AllTags: 74.36, Lemmas: 87.61, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00
-Dev  epoch 7, lr 0.001, UPOS: 90.21, XPOS: 90.14, UFeats: 77.96, AllTags: 74.75, Lemmas: 88.47, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00
-Dev  epoch 8, lr 0.001, UPOS: 90.20, XPOS: 90.01, UFeats: 78.18, AllTags: 74.91, Lemmas: 88.25, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00
-Dev  epoch 9, lr 0.001, UPOS: 90.39, XPOS: 90.33, UFeats: 78.25, AllTags: 75.01, Lemmas: 88.70, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00
-Dev  epoch 10, lr 0.001, UPOS: 90.34, XPOS: 90.30, UFeats: 79.06, AllTags: 75.94, Lemmas: 88.57, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00
-Test  epoch 10, lr 0.001, UPOS: 91.25, XPOS: 91.22, UFeats: 78.90, AllTags: 76.30, Lemmas: 88.83, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00
+Dev  epoch 1, lr 0.001, UPOS: 82.41, XPOS: 82.27, UFeats: 66.61, AllTags: 33.10, Lemmas: 73.17, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00, FEATS_Case: 85.60, FEATS_Number: 86.74, FEATS_Poss: 56.19, FEATS_PronType: 56.94, FEATS_Degree: 10.07, FEATS_Form: 45.63, FEATS_NumType: 84.71, FEATS_Tense: 69.36, FEATS_Person: 69.92, FEATS_Mood: 79.44, FEATS_Polarity: 78.71, FEATS_Voice: 57.55, FEATS_VerbForms: 85.13
+Dev  epoch 2, lr 0.001, UPOS: 86.38, XPOS: 86.15, UFeats: 76.82, AllTags: 42.59, Lemmas: 81.56, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00, FEATS_Case: 89.46, FEATS_Number: 90.48, FEATS_Poss: 69.86, FEATS_PronType: 77.20, FEATS_Degree: 49.14, FEATS_Form: 60.66, FEATS_NumType: 91.32, FEATS_Tense: 73.93, FEATS_Person: 76.66, FEATS_Mood: 82.07, FEATS_Polarity: 82.91, FEATS_Voice: 66.62, FEATS_VerbForms: 88.35
+Dev  epoch 3, lr 0.001, UPOS: 88.67, XPOS: 88.66, UFeats: 78.24, AllTags: 47.48, Lemmas: 85.12, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00, FEATS_Case: 91.61, FEATS_Number: 91.61, FEATS_Poss: 78.20, FEATS_PronType: 80.44, FEATS_Degree: 35.85, FEATS_Form: 66.81, FEATS_NumType: 94.79, FEATS_Tense: 75.55, FEATS_Person: 78.54, FEATS_Mood: 85.11, FEATS_Polarity: 84.12, FEATS_Voice: 64.14, FEATS_VerbForms: 90.32
+Dev  epoch 4, lr 0.001, UPOS: 89.12, XPOS: 88.99, UFeats: 79.72, AllTags: 49.19, Lemmas: 85.99, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00, FEATS_Case: 92.08, FEATS_Number: 92.79, FEATS_Poss: 80.98, FEATS_PronType: 82.64, FEATS_Degree: 49.62, FEATS_Form: 66.38, FEATS_NumType: 94.30, FEATS_Tense: 72.92, FEATS_Person: 79.29, FEATS_Mood: 82.47, FEATS_Polarity: 83.69, FEATS_Voice: 67.12, FEATS_VerbForms: 92.04
+Dev  epoch 5, lr 0.001, UPOS: 89.66, XPOS: 89.47, UFeats: 81.62, AllTags: 49.82, Lemmas: 87.25, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00, FEATS_Case: 92.19, FEATS_Number: 92.82, FEATS_Poss: 82.14, FEATS_PronType: 81.48, FEATS_Degree: 60.62, FEATS_Form: 67.14, FEATS_NumType: 94.65, FEATS_Tense: 76.55, FEATS_Person: 79.97, FEATS_Mood: 85.20, FEATS_Polarity: 85.01, FEATS_Voice: 71.40, FEATS_VerbForms: 91.94
+Dev  epoch 6, lr 0.001, UPOS: 90.01, XPOS: 89.88, UFeats: 81.67, AllTags: 51.06, Lemmas: 87.61, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00, FEATS_Case: 93.09, FEATS_Number: 93.09, FEATS_Poss: 82.48, FEATS_PronType: 83.13, FEATS_Degree: 52.85, FEATS_Form: 70.10, FEATS_NumType: 94.32, FEATS_Tense: 77.84, FEATS_Person: 80.21, FEATS_Mood: 85.83, FEATS_Polarity: 86.22, FEATS_Voice: 70.11, FEATS_VerbForms: 92.39
+Dev  epoch 7, lr 0.001, UPOS: 90.21, XPOS: 90.14, UFeats: 81.69, AllTags: 51.24, Lemmas: 88.47, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00, FEATS_Case: 92.60, FEATS_Number: 93.53, FEATS_Poss: 82.70, FEATS_PronType: 84.14, FEATS_Degree: 53.06, FEATS_Form: 69.09, FEATS_NumType: 95.92, FEATS_Tense: 77.44, FEATS_Person: 80.26, FEATS_Mood: 85.57, FEATS_Polarity: 85.20, FEATS_Voice: 70.34, FEATS_VerbForms: 92.08
+Dev  epoch 8, lr 0.001, UPOS: 90.20, XPOS: 90.01, UFeats: 82.43, AllTags: 51.47, Lemmas: 88.25, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00, FEATS_Case: 93.20, FEATS_Number: 93.41, FEATS_Poss: 82.27, FEATS_PronType: 85.02, FEATS_Degree: 58.77, FEATS_Form: 70.84, FEATS_NumType: 94.06, FEATS_Tense: 78.11, FEATS_Person: 79.84, FEATS_Mood: 85.91, FEATS_Polarity: 86.37, FEATS_Voice: 71.48, FEATS_VerbForms: 92.34
+Dev  epoch 9, lr 0.001, UPOS: 90.39, XPOS: 90.33, UFeats: 82.79, AllTags: 51.59, Lemmas: 88.70, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00, FEATS_Case: 92.67, FEATS_Number: 93.46, FEATS_Poss: 82.61, FEATS_PronType: 85.18, FEATS_Degree: 57.48, FEATS_Form: 71.73, FEATS_NumType: 96.07, FEATS_Tense: 78.49, FEATS_Person: 79.35, FEATS_Mood: 87.19, FEATS_Polarity: 85.83, FEATS_Voice: 73.90, FEATS_VerbForms: 92.34
+Dev  epoch 10, lr 0.001, UPOS: 90.34, XPOS: 90.30, UFeats: 82.63, AllTags: 52.36, Lemmas: 88.57, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00, FEATS_Case: 93.53, FEATS_Number: 93.48, FEATS_Poss: 83.86, FEATS_PronType: 86.89, FEATS_Degree: 55.86, FEATS_Form: 70.50, FEATS_NumType: 95.74, FEATS_Tense: 77.39, FEATS_Person: 81.66, FEATS_Mood: 85.82, FEATS_Polarity: 85.93, FEATS_Voice: 71.73, FEATS_VerbForms: 91.77
+Dev  epoch 11, lr 0.001, UPOS: 90.34, XPOS: 90.05, UFeats: 82.23, AllTags: 51.73, Lemmas: 88.64, UAS: 0.00, LAS: 0.00, CLAS: 0.00, MLAS: 0.00, BLEX: 0.00, FEATS_Case: 93.22, FEATS_Number: 93.35, FEATS_Poss: 83.09, FEATS_PronType: 83.20, FEATS_Degree: 57.67, FEATS_Form: 71.47, FEATS_NumType: 96.41, FEATS_Tense: 77.66, FEATS_Person: 78.45, FEATS_Mood: 84.27, FEATS_Polarity: 86.11, FEATS_Voice: 71.77, FEATS_VerbForms: 92.27

@@ -23,6 +23,22 @@ CONTENT_DEPRELS = {
     "parataxis", "orphan", "goeswith", "reparandum", "root", "dep"
 }
 
+FEATURE_CATEGORIES = {
+    "Case": ["None", "Nom", "Gen", "Dat", "Acc", "Loc", "Abl"],
+    "Number": ["None", "Sing", "Plur", "X"],
+    "Poss": ["None", "Yes", "No"],
+    "PronType": ["None", "Prs", "Dem", "Int", "Neg", "Def", "Ind"],
+    "Degree": ["None", "Pos", "Comp", "Superl"],
+    "Form": ["None", "A", "B", "C", "D"],
+    "NumType": ["None", "Card", "Ord", "Set", "App", "Mult", "Frac"],
+    "Tense": ["None", "Pres", "Past", "Fut"],
+    "Person": ["None", "1", "2", "3"],
+    "Mood": ["None", "Imp", "Cnd", "Pot", "PotDes", "Ind"],
+    "Polarity": ["None", "Neg", "Pos"],
+    "Voice": ["None", "Act", "Rcp", "Mid", "Pass", "Cau"],
+    "VerbForms": ["None", "B"]
+    }
+
 FUNCTIONAL_DEPRELS = {
     "aux", "cop", "mark", "det", "clf", "case", "cc"
 }
@@ -71,8 +87,7 @@ def load_conllu(file, single_root=1):
             # List of references to UDWord instances representing functional-deprel children.
             self.functional_children = []
             # Only consider universal FEATS.
-            self.columns[FEATS] = "|".join(sorted(feat for feat in columns[FEATS].split("|")
-                                                  if feat.split("=", 1)[0] in UNIVERSAL_FEATURES))
+            self.columns[FEATS] = "|".join(sorted(columns[FEATS].split("|")))
             # Let's ignore language-specific deprel subtypes.
             self.columns[DEPREL] = columns[DEPREL].split(":")[0]
             # Precompute which deprels are CONTENT_DEPRELS and which FUNCTIONAL_DEPRELS
@@ -372,8 +387,29 @@ def evaluate(gold_ud, system_ud):
     # Align words
     alignment = align_words(gold_ud.words, system_ud.words)
 
-    # Compute the F1-scores
-    return {
+    from collections import defaultdict
+
+    # === FEATS по категориям ===
+    category_scores = defaultdict(lambda: [0, 0, 0])  # correct, gold_total, system_total
+
+
+    for pair in alignment.matched_words:
+        gold_feats = dict(kv.split("=") for kv in pair.gold_word.columns[FEATS].split("|") if "=" in kv)
+        pred_feats = dict(kv.split("=") for kv in pair.system_word.columns[FEATS].split("|") if "=" in kv)
+
+        for category in FEATURE_CATEGORIES:
+            gold_val = gold_feats.get(category, "None")
+            pred_val = pred_feats.get(category, "None")
+
+            if gold_val != "None":
+                category_scores[category][1] += 1
+            if pred_val != "None":
+                category_scores[category][2] += 1
+            if gold_val == pred_val and gold_val != "None":
+                category_scores[category][0] += 1
+
+    # основной словарь метрик
+    metrics = {
         "Tokens": spans_score(gold_ud.tokens, system_ud.tokens),
         "Sentences": spans_score(gold_ud.sentences, system_ud.sentences),
         "Words": alignment_score(alignment),
@@ -387,13 +423,32 @@ def evaluate(gold_ud, system_ud):
         "CLAS": alignment_score(alignment, lambda w, ga: (ga(w.parent), w.columns[DEPREL]),
                                 filter_fn=lambda w: w.is_content_deprel),
         "MLAS": alignment_score(alignment, lambda w, ga: (ga(w.parent), w.columns[DEPREL], w.columns[UPOS], w.columns[FEATS],
-                                                         [(ga(c), c.columns[DEPREL], c.columns[UPOS], c.columns[FEATS])
-                                                          for c in w.functional_children]),
+                                                        [(ga(c), c.columns[DEPREL], c.columns[UPOS], c.columns[FEATS])
+                                                        for c in w.functional_children]),
                                 filter_fn=lambda w: w.is_content_deprel),
         "BLEX": alignment_score(alignment, lambda w, ga: (ga(w.parent), w.columns[DEPREL],
-                                                          w.columns[LEMMA] if ga(w).columns[LEMMA] != "_" else "_"),
+                                                        w.columns[LEMMA] if ga(w).columns[LEMMA] != "_" else "_"),
                                 filter_fn=lambda w: w.is_content_deprel),
     }
+
+    # добавим FEATS_{категория}
+    for category, (correct, gold_total, pred_total) in category_scores.items():
+        print(category)
+        metrics[f"FEATS_{category}"] = Score(gold_total, pred_total, correct)
+
+    # Средняя F1 по всем категориальным FEATS
+    feats_f1s = []
+    for category in FEATURE_CATEGORIES:
+        key = f"FEATS_{category}"
+        if key in metrics:
+            feats_f1s.append(metrics[key].f1)
+
+    uf_avg_f1 = sum(feats_f1s) / len(feats_f1s) if feats_f1s else 0
+    metrics["UFeats"] = Score(1, 1, uf_avg_f1)  # "заглушка" с f1=avg, игнорируя precision/recall
+
+
+    return metrics
+
 
 
 def load_conllu_file(path, single_root=1):
