@@ -5,6 +5,8 @@ import sys
 
 import numpy as np
 
+import utils
+
 class Dataset:
     # Индексы для каждого поля в CoNLL-U
     FORMS = 0
@@ -33,22 +35,8 @@ class Dataset:
         "MISC": MISC
     }
 
-    FEATURE_CATEGORIES = {
-        "Case": ["None", "Nom", "Gen", "Dat", "Acc", "Loc", "Abl"],
-        "Number": ["None", "Sing", "Plur", "X"],
-        "Poss": ["None", "Yes", "No"],
-        "PronType": ["None", "Prs", "Dem", "Int", "Neg", "Def", "Ind"],
-        "Degree": ["None", "Pos", "Comp", "Superl"],
-        "Form": ["None", "A", "B", "C", "D"],
-        "NumType": ["None", "Card", "Ord", "Set", "App", "Mult", "Frac"],
-        "Tense": ["None", "Pres", "Past", "Fut"],
-        "Person": ["None", "1", "2", "3"],
-        "Mood": ["None", "Imp", "Cnd", "Pot", "PotDes", "Ind"],
-        "Polarity": ["None", "Neg", "Pos"],
-        "Voice": ["None", "Act", "Rcp", "Mid", "Pass", "Cau"],
-        "VerbForms": ["None", "B"]
-    }
-    FEATURE_CATEGORY_LIST = list(FEATURE_CATEGORIES.keys())
+    
+    FEATURE_CATEGORY_LIST = list(utils.FEATURE_CATEGORIES.keys())
 
 
     re_extras = re.compile(r"^#|^\d+-|^\d+\.")
@@ -174,7 +162,7 @@ class Dataset:
                             lemma_dict_with_copy[self._gen_lemma_rule(columns[self.FORMS], word, True)] = 1
                             lemma_dict_no_copy[self._gen_lemma_rule(columns[self.FORMS], word, False)] = 1
                         elif f == self.FEATS:
-                            feats_tuple = [0] * len(self.FEATURE_CATEGORIES)
+                            feats_tuple = [0] * len(utils.FEATURE_CATEGORIES)
 
                             if word != "_":
                                 feats_parts = word.split("|")
@@ -182,12 +170,12 @@ class Dataset:
                                     if "=" in part:
                                         cat, val = part.split("=", 1)
 
-                                        if cat in self.FEATURE_CATEGORIES:
+                                        if cat in utils.FEATURE_CATEGORIES:
                                             cat_index = self.FEATURE_CATEGORY_LIST.index(cat)
 
                                             # Инициализируем фиксированный словарь значений
                                             if cat not in factor.words_map:
-                                                factor.words_map[cat] = {v: i for i, v in enumerate(self.FEATURE_CATEGORIES[cat])}
+                                                factor.words_map[cat] = {v: i for i, v in enumerate(utils.FEATURE_CATEGORIES[cat])}
 
                                             # Если значение не из словаря — заменить на "None"
                                             if val not in factor.words_map[cat]:

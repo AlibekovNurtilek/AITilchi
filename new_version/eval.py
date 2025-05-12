@@ -9,6 +9,8 @@ import sys
 import unicodedata
 import unittest
 
+import utils
+
 __version__ = "2.1.1-dev"
 
 
@@ -23,30 +25,8 @@ CONTENT_DEPRELS = {
     "parataxis", "orphan", "goeswith", "reparandum", "root", "dep"
 }
 
-FEATURE_CATEGORIES = {
-    "Case": ["None", "Nom", "Gen", "Dat", "Acc", "Loc", "Abl"],
-    "Number": ["None", "Sing", "Plur", "X"],
-    "Poss": ["None", "Yes", "No"],
-    "PronType": ["None", "Prs", "Dem", "Int", "Neg", "Def", "Ind"],
-    "Degree": ["None", "Pos", "Comp", "Superl"],
-    "Form": ["None", "A", "B", "C", "D"],
-    "NumType": ["None", "Card", "Ord", "Set", "App", "Mult", "Frac"],
-    "Tense": ["None", "Pres", "Past", "Fut"],
-    "Person": ["None", "1", "2", "3"],
-    "Mood": ["None", "Imp", "Cnd", "Pot", "PotDes", "Ind"],
-    "Polarity": ["None", "Neg", "Pos"],
-    "Voice": ["None", "Act", "Rcp", "Mid", "Pass", "Cau"],
-    "VerbForms": ["None", "B"]
-    }
-
 FUNCTIONAL_DEPRELS = {
     "aux", "cop", "mark", "det", "clf", "case", "cc"
-}
-
-UNIVERSAL_FEATURES = {
-    "PronType", "NumType", "Poss", "Reflex", "Foreign", "Abbr", "Gender",
-    "Animacy", "Number", "Case", "Definite", "Degree", "VerbForm", "Mood",
-    "Tense", "Aspect", "Voice", "Evident", "Polarity", "Person", "Polite"
 }
 
 # UD Error is used when raising exceptions in this module
@@ -196,6 +176,7 @@ def load_conllu(file, single_root=1):
             except:
                 raise UDError("Cannot parse word ID '{}'".format(columns[ID]))
             if word_id != len(ud.words) - sentence_start + 1:
+                print(columns)
                 raise UDError("Incorrect word ID '{}' for word '{}', expected '{}'".format(columns[ID], columns[FORM], len(ud.words) - sentence_start + 1))
 
             if columns[HEAD] != "_":
@@ -389,15 +370,14 @@ def evaluate(gold_ud, system_ud):
 
     from collections import defaultdict
 
-    # === FEATS по категориям ===
+   # === FEATS по категориям ===
     category_scores = defaultdict(lambda: [0, 0, 0])  # correct, gold_total, system_total
-
 
     for pair in alignment.matched_words:
         gold_feats = dict(kv.split("=") for kv in pair.gold_word.columns[FEATS].split("|") if "=" in kv)
         pred_feats = dict(kv.split("=") for kv in pair.system_word.columns[FEATS].split("|") if "=" in kv)
 
-        for category in FEATURE_CATEGORIES:
+        for category in utils.FEATURE_CATEGORIES:
             gold_val = gold_feats.get(category, "None")
             pred_val = pred_feats.get(category, "None")
 
@@ -415,8 +395,8 @@ def evaluate(gold_ud, system_ud):
         "Words": alignment_score(alignment),
         "UPOS": alignment_score(alignment, lambda w, _: w.columns[UPOS]),
         "XPOS": alignment_score(alignment, lambda w, _: w.columns[XPOS]),
-        "UFeats": alignment_score(alignment, lambda w, _: w.columns[FEATS]),
-        "AllTags": alignment_score(alignment, lambda w, _: (w.columns[UPOS], w.columns[XPOS], w.columns[FEATS])),
+        "UFeats": 0,  # будет заменено ниже
+        "AllTags": 0,  # будет заменено ниже
         "Lemmas": alignment_score(alignment, lambda w, ga: w.columns[LEMMA] if ga(w).columns[LEMMA] != "_" else "_"),
         "UAS": alignment_score(alignment, lambda w, ga: ga(w.parent)),
         "LAS": alignment_score(alignment, lambda w, ga: (ga(w.parent), w.columns[DEPREL])),
@@ -431,23 +411,35 @@ def evaluate(gold_ud, system_ud):
                                 filter_fn=lambda w: w.is_content_deprel),
     }
 
-    # добавим FEATS_{категория}
+    # Добавим FEATS_{категория}
     for category, (correct, gold_total, pred_total) in category_scores.items():
-        print(category)
         metrics[f"FEATS_{category}"] = Score(gold_total, pred_total, correct)
 
-    # Средняя F1 по всем категориальным FEATS
-    feats_f1s = []
-    for category in FEATURE_CATEGORIES:
-        key = f"FEATS_{category}"
-        if key in metrics:
-            feats_f1s.append(metrics[key].f1)
+    # UFeats (микро)
+    ufeats_gold = sum(metrics[f"FEATS_{cat}"].gold_total for cat in utils.FEATURE_CATEGORIES if f"FEATS_{cat}" in metrics)
+    ufeats_pred = sum(metrics[f"FEATS_{cat}"].system_total for cat in utils.FEATURE_CATEGORIES if f"FEATS_{cat}" in metrics)
+    ufeats_correct = sum(metrics[f"FEATS_{cat}"].correct for cat in utils.FEATURE_CATEGORIES if f"FEATS_{cat}" in metrics)
 
-    uf_avg_f1 = sum(feats_f1s) / len(feats_f1s) if feats_f1s else 0
-    metrics["UFeats"] = Score(1, 1, uf_avg_f1)  # "заглушка" с f1=avg, игнорируя precision/recall
+    metrics["UFeats"] = Score(ufeats_gold, ufeats_pred, ufeats_correct)
 
+    # UFeats_macro (необязательно, только для информации)
+    feats_f1s = [metrics[f"FEATS_{cat}"].f1 for cat in utils.FEATURE_CATEGORIES if f"FEATS_{cat}" in metrics]
+    if feats_f1s:
+        metrics["UFeats_macro"] = Score(1, 1, sum(feats_f1s) / len(feats_f1s))
+
+    # AllTags = UPOS + XPOS + UFeats (микро)
+    upos = metrics["UPOS"]
+    xpos = metrics["XPOS"]
+    ufeats = metrics["UFeats"]
+
+    gold_total = upos.gold_total + xpos.gold_total + ufeats.gold_total
+    pred_total = upos.system_total + xpos.system_total + ufeats.system_total
+    correct = upos.correct + xpos.correct + ufeats.correct
+
+    metrics["AllTags"] = Score(gold_total, pred_total, correct)
 
     return metrics
+
 
 
 

@@ -5,4 +5,5 @@ nurtilek@pc:~/Desktop/udpipe1/src$ ./udpipe --train kyrgyz.tokenizer   --tokeniz
 
 
 python aitilchi.py kyrgyz-ud-model --predict --predict_input input.conllu --predict_output output.conllu
-python aitilchi.py kyrgyz-ud-model --predict --predict_input /home/nurtilek/Desktop/AITilchi/branch_shorm/input.conllu --predict_output /home/nurtilek/Desktop/AITilchi/branch_shorm/output.conllu
+
+

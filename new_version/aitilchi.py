@@ -12,6 +12,7 @@ import ufal.chu_liu_edmonds
 
 import dataset
 import eval
+import utils
 
 if not tf.__version__.startswith("1"):
     tf = tf.compat.v1
@@ -22,27 +23,13 @@ tf.logging.set_verbosity(tf.logging.ERROR)
 # Игнорим варнинги типа "is deprecated"
 warnings.filterwarnings("ignore", message=".*is deprecated")
 
-FEATURE_CATEGORIES = {
-    "Case": ["None", "Nom", "Gen", "Dat", "Acc", "Loc", "Abl"],
-    "Number": ["None", "Sing", "Plur", "X"],
-    "Poss": ["None", "Yes", "No"],
-    "PronType": ["None", "Prs", "Dem", "Int", "Neg", "Def", "Ind"],
-    "Degree": ["None", "Pos", "Comp", "Superl"],
-    "Form": ["None", "A", "B", "C", "D"],
-    "NumType": ["None", "Card", "Ord", "Set", "App", "Mult", "Frac"],
-    "Tense": ["None", "Pres", "Past", "Fut"],
-    "Person": ["None", "1", "2", "3"],
-    "Mood": ["None", "Imp", "Cnd", "Pot", "PotDes", "Ind"],
-    "Polarity": ["None", "Neg", "Pos"],
-    "Voice": ["None", "Act", "Rcp", "Mid", "Pass", "Cau"],
-    "VerbForms": ["None", "B"]
-    }
+
 class AITilchi:
 
 
     METRICS = ["UPOS", "XPOS", "UFeats", "AllTags", "Lemmas", "UAS", "LAS", "CLAS", "MLAS", "BLEX"]
-    METRICS += [f"FEATS_{cat}" for cat in FEATURE_CATEGORIES.keys()]
-    NUM_OF_FEATS = 13
+    METRICS += [f"FEATS_{cat}" for cat in utils.FEATURE_CATEGORIES.keys()]
+    NUM_OF_FEATS = len(utils.FEATURE_CATEGORIES)
 
     def __init__(self, threads, seed=42):
         self.morphodita = None
@@ -172,8 +159,8 @@ class AITilchi:
             self.predictions_feats = {}
             self.predictions_feats_logits = {}
 
-            for i, category in enumerate(train.FEATURE_CATEGORIES.keys()):
-                num_classes = len(train.FEATURE_CATEGORIES[category])  # <--- ТУТ правильно устанавливаем число классов
+            for i, category in enumerate(utils.FEATURE_CATEGORIES.keys()):
+                num_classes = len(utils.FEATURE_CATEGORIES[category])  # <--- ТУТ правильно устанавливаем число классов
                 with tf.variable_scope(f"feats_{category.lower()}"):
                     feat_layer = tag_hidden_layer  # вход: [batch, length, rnn_dim]
 
@@ -295,7 +282,7 @@ class AITilchi:
                     self.training_summaries.append(tf.contrib.summary.scalar("train/gradient_norm", gradient_norm))
                 for tag in args.tags:
                     if tag == "FEATS":
-                        for i, category in enumerate(train.FEATURE_CATEGORIES.keys()):
+                        for i, category in enumerate(utils.FEATURE_CATEGORIES.keys()):
                             acc = tf.reduce_sum(
                                 tf.cast(tf.equal(self.feats_targets[:, :, i], self.predictions_feats[category]), tf.float32) * weights
                             ) / weights_sum
@@ -386,8 +373,8 @@ class AITilchi:
         import io
         conllu, sentences = io.StringIO(), 0
 
-        feature_categories = list(dataset.FEATURE_CATEGORIES.keys())
-        feature_values = dataset.FEATURE_CATEGORIES  # dict[str, list[str]]
+        feature_categories = list(utils.FEATURE_CATEGORIES.keys())
+        feature_values = utils.FEATURE_CATEGORIES  # dict[str, list[str]]
 
         while not dataset.epoch_finished():
             sentence_lens, word_ids, charseq_ids, charseqs, charseq_lens, batch_feats = dataset.next_batch(args.batch_size)
@@ -534,10 +521,6 @@ class AITilchi:
         import io
         conllu = self.predict(dataset.data, True, args)
         metrics = eval.evaluate(dataset.gold, eval.load_conllu(io.StringIO(conllu), args.single_root))
-        for key in sorted(metrics):
-            if key.startswith("FEATS_"):
-                score = metrics[key]
-                print(f"{key:15} — F1: {score.f1:.2%}, Precision: {score.precision:.2%}, Recall: {score.recall:.2%}")
         event = [tf.Summary.Value(tag="{}/{}".format(dataset_name, metric), simple_value=metrics[metric].f1) for metric in self.METRICS]
         event = tf.Event(summary=tf.Summary(value=event), step=self.session.run(self.global_step), wall_time=time.time()).SerializeToString()
         self.session.run(self.event_summaries[dataset.label], {self.event: event})
@@ -558,6 +541,7 @@ class AITilchi:
         parser.add_argument("--dev", default=[], nargs="+", type=str, help="Dev files.")
         parser.add_argument("--dropout", default=0.5, type=float, help="Dropout")
         parser.add_argument("--epochs", default="40:1e-3,20:1e-4", type=str, help="Epochs and learning rates.")
+        parser.add_argument("--test_epochs", default=3, type=int, help="Count of test epochs.")
         parser.add_argument("--exp", default=None, type=str, help="Experiment name.")
         parser.add_argument("--label_smoothing", default=0.03, type=float, help="Label smoothing.")
         parser.add_argument("--max_sentence_len", default=120, type=int, help="Max sentence length.")
@@ -682,12 +666,12 @@ if __name__ == "__main__":
                     metrics_log = ", ".join(("{}: {:.2f}".format(metric, 100 * metrics[metric].f1) for metric in AITilchi.METRICS))
                     for log_file in log_files:
                         print("Dev {} epoch {}, lr {}, {}".format(dev.label, epoch + 1, learning_rate, metrics_log), file=log_file, flush=True)
-
-        for test in tests:
-            test_accuracy, metrics = network.evaluate("test", test, args)
-            metrics_log = ", ".join(("{}: {:.2f}".format(metric, 100 * metrics[metric].f1) for metric in AITilchi.METRICS))
-            for log_file in log_files:
-                print("Test {} epoch {}, lr {}, {}".format(test.label, epoch + 1, learning_rate, metrics_log), file=log_file, flush=True)
+        for epoch in range(args.test_epochs):
+            for test in tests:
+                test_accuracy, metrics = network.evaluate("test", test, args)
+                metrics_log = ", ".join(("{}: {:.2f}".format(metric, 100 * metrics[metric].f1) for metric in AITilchi.METRICS))
+                for log_file in log_files:
+                    print("Test {} epoch {}, lr {}, {}".format(test.label, epoch + 1, learning_rate, metrics_log), file=log_file, flush=True)
         network.close_writers()
 
         network.saver.save(network.session, os.path.join(args.model, "weights"), write_meta_graph=False)
