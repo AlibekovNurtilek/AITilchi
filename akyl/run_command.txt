@@ -7,3 +7,6 @@ nurtilek@pc:~/Desktop/udpipe1/src$ ./udpipe --train kyrgyz.tokenizer   --tokeniz
 python aitilchi.py kyrgyz-ud-model --predict --predict_input input.conllu --predict_output output.conllu
 
 
+
+
+python aitilchi.py kyrgyz-parsing-model   --train corpus/train.conllu   --dev corpus/dev.conllu   --test corpus/test.conllu   --rnn_cell_dim 256   --batch_size 16   --epochs 50:0.001   --word_dropout 0.2   --dropout 0.3   

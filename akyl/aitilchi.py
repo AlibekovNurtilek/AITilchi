@@ -280,11 +280,9 @@ class AITilchi:
         # because it works even TF 2 is in Eager mode.
         self.session.run(self.saver.saver_def.restore_op_name,
                          {self.saver.saver_def.filename_tensor_name: os.path.join(path, "weights")})
-        print("bbbbbbbbb")
         # Try loading also consistent feats table.
         consistent_feats_table = os.path.join(path, "consistent_feats.table")
         if os.path.exists(consistent_feats_table):
-            print("aaaaaaa")
             import gzip
             with gzip.open(consistent_feats_table, "rb") as consistent_feats_table_file:
                 consistent_feats_table = np.load(consistent_feats_table_file)
@@ -298,12 +296,14 @@ class AITilchi:
 
     def close_writers(self):
         self.session.run(self.summary_writers_close)
-
     def train_epoch(self, train, learning_rate, args):
         batches, at_least_one_epoch = 0, False
+        batch_num = 0  # Счётчик номера батча
+
         while batches < args.min_epoch_batches:
             while not train.epoch_finished():
                 sentence_lens, word_ids, charseq_ids, charseqs, charseq_lens = train.next_batch(args.batch_size)
+
                 if args.word_dropout:
                     mask = np.random.binomial(n=1, p=args.word_dropout, size=word_ids[train.FORMS].shape)
                     word_ids[train.FORMS] = (1 - mask) * word_ids[train.FORMS] + mask * train.factors[train.FORMS].words_map["<unk>"]
@@ -311,24 +311,59 @@ class AITilchi:
                     mask = np.random.binomial(n=1, p=args.char_dropout, size=charseqs[train.FORMS].shape)
                     charseqs[train.FORMS] = (1 - mask) * charseqs[train.FORMS] + mask * train.factors[train.FORMS].alphabet_map["<unk>"]
 
-                feeds = {self.is_training: True, self.learning_rate: learning_rate, self.sentence_lens: sentence_lens,
-                         self.charseqs: charseqs[train.FORMS], self.charseq_lens: charseq_lens[train.FORMS],
-                         self.word_ids: word_ids[train.FORMS], self.charseq_ids: charseq_ids[train.FORMS]}
+                feeds = {
+                    self.is_training: True,
+                    self.learning_rate: learning_rate,
+                    self.sentence_lens: sentence_lens,
+                    self.charseqs: charseqs[train.FORMS],
+                    self.charseq_lens: charseq_lens[train.FORMS],
+                    self.word_ids: word_ids[train.FORMS],
+                    self.charseq_ids: charseq_ids[train.FORMS]
+                }
+
                 if train.variants > 1:
                     feeds[self.variants] = word_ids[train.VARIANT]
                 if train.embeddings_size:
                     if args.word_dropout:
-                        mask = np.random.binomial(n=1, p=args.word_dropout, size=[*word_ids[train.EMBEDDINGS].shape[:2], 1])
+                        mask = np.random.binomial(n=1, p=args.word_dropout,
+                                                size=[*word_ids[train.EMBEDDINGS].shape[:2], 1])
                         word_ids[train.EMBEDDINGS] *= (1 - mask)
                     feeds[self.embeddings] = word_ids[train.EMBEDDINGS]
-                for tag in args.tags: feeds[self.tags[tag]] = word_ids[train.FACTORS_MAP[tag]]
+
+                for tag in args.tags:
+                    feeds[self.tags[tag]] = word_ids[train.FACTORS_MAP[tag]]
+
                 if args.parse:
                     feeds[self.heads] = word_ids[train.HEAD]
                     feeds[self.deprels] = word_ids[train.DEPREL]
-                self.session.run([self.training, self.training_summaries], feeds)
+
+                print(f"\n📦 BATCH #{batch_num}")
+
+                try:
+                    self.session.run([self.training, self.training_summaries], feeds)
+                except tf.errors.InvalidArgumentError as e:
+                    print("🔴 TensorFlow InvalidArgumentError: ", e)
+                    print("❗ Ошибка произошла в BATCH №", batch_num)
+                    print("⚠️ HEADS SHAPE:", word_ids[train.HEAD].shape)
+                    print("⚠️ HEADS EXAMPLE:\n", word_ids[train.HEAD])
+
+                    bad_positions = np.argwhere(word_ids[train.HEAD] == -1)
+                    for pos in bad_positions:
+                        b, t = pos
+                        print(f"❌ В предложении #{b} (внутри батча), токен #{t} предсказан head = -1")
+                        print("→ sentence len =", sentence_lens[b])
+                        print("→ forms:", train.factors[train.FORMS].strings[b])
+                        print("→ heads row:", word_ids[train.HEAD][b])
+                        print("→ sentence id (если есть): unknown (или реализуй .sentences[b].id если нужно)")
+
+                    raise
+
+                batch_num += 1
                 batches += 1
-                if at_least_one_epoch: break
+                if at_least_one_epoch:
+                    break
             at_least_one_epoch = True
+
 
     def predict(self, dataset, evaluating, args):
         import io

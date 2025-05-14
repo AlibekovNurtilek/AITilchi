@@ -96,6 +96,7 @@ def load_conllu(file, single_root=1):
             # Add parent and children UDWord links and check there are no cycles
             def process_word(word):
                 if word.parent == "remapping":
+                    print(word.columns)
                     raise UDError("There is a cycle in a sentence")
                 if word.parent is None:
                     if word.columns[HEAD] == "_":
