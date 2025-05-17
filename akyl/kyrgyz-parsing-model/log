@@ -1,8 +1,8 @@
 UPOS: 23
-XPOS: 37
-FEATS: 1669
-LEMMAS: 320
-DEPREL: 56
+XPOS: 35
+FEATS: 1682
+LEMMAS: 313
+DEPREL: 55
 VARIANT: 1
 Parsing with args:
 batch_size: 16
@@ -12,7 +12,7 @@ cle_dim: 256
 clip_gradient: 2.0
 dev: ['corpus/dev.conllu']
 dropout: 0.3
-epochs: [(50, 0.001)]
+epochs: [(5, 0.001)]
 exp: None
 label_smoothing: 0.03
 max_sentence_len: 120
@@ -41,3 +41,9 @@ variant_dim: 128
 we_dim: 512
 wembedding_model: bert-base-multilingual-uncased-last4
 word_dropout: 0.2
+Dev  epoch 1, lr 0.001, UPOS: 80.19, XPOS: 71.11, UFeats: 52.28, AllTags: 39.38, Lemmas: 71.37, UAS: 59.71, LAS: 44.82, CLAS: 41.17, MLAS: 17.91, BLEX: 29.26
+Dev  epoch 2, lr 0.001, UPOS: 85.80, XPOS: 73.91, UFeats: 58.58, AllTags: 48.19, Lemmas: 79.69, UAS: 64.98, LAS: 52.44, CLAS: 49.27, MLAS: 27.07, BLEX: 40.37
+Dev  epoch 3, lr 0.001, UPOS: 88.43, XPOS: 79.03, UFeats: 62.41, AllTags: 52.40, Lemmas: 84.01, UAS: 67.38, LAS: 55.52, CLAS: 53.02, MLAS: 31.11, BLEX: 45.62
+Dev  epoch 4, lr 0.001, UPOS: 89.74, XPOS: 80.21, UFeats: 65.55, AllTags: 55.73, Lemmas: 85.12, UAS: 68.06, LAS: 57.35, CLAS: 54.87, MLAS: 33.57, BLEX: 46.87
+Dev  epoch 5, lr 0.001, UPOS: 90.31, XPOS: 81.14, UFeats: 65.95, AllTags: 56.72, Lemmas: 86.49, UAS: 68.18, LAS: 57.94, CLAS: 55.83, MLAS: 35.08, BLEX: 48.94
+Test  epoch 5, lr 0.001, UPOS: 88.66, XPOS: 79.54, UFeats: 65.41, AllTags: 55.23, Lemmas: 86.04, UAS: 66.91, LAS: 56.80, CLAS: 54.52, MLAS: 34.24, BLEX: 47.79

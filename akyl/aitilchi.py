@@ -303,7 +303,6 @@ class AITilchi:
         while batches < args.min_epoch_batches:
             while not train.epoch_finished():
                 sentence_lens, word_ids, charseq_ids, charseqs, charseq_lens = train.next_batch(args.batch_size)
-
                 if args.word_dropout:
                     mask = np.random.binomial(n=1, p=args.word_dropout, size=word_ids[train.FORMS].shape)
                     word_ids[train.FORMS] = (1 - mask) * word_ids[train.FORMS] + mask * train.factors[train.FORMS].words_map["<unk>"]
@@ -352,7 +351,10 @@ class AITilchi:
                         b, t = pos
                         print(f"❌ В предложении #{b} (внутри батча), токен #{t} предсказан head = -1")
                         print("→ sentence len =", sentence_lens[b])
-                        print("→ forms:", train.factors[train.FORMS].strings[b])
+                        form_ids = word_ids[train.FORMS][b]  # b — индекс предложения в батче
+                        print(form_ids)
+                        form_strings = [train.factors[train.FORMS].words[i] for i in form_ids]
+                        print("→ forms:", form_strings)
                         print("→ heads row:", word_ids[train.HEAD][b])
                         print("→ sentence id (если есть): unknown (или реализуй .sentences[b].id если нужно)")
 

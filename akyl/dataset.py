@@ -304,7 +304,6 @@ class Dataset:
             batch_charseqs.append(np.zeros([len(charseqs), np.max(batch_charseq_lens[-1])], np.int32))
             for i in range(len(charseqs)):
                 batch_charseqs[-1][i, 0:len(charseqs[i])] = charseqs[i]
-
         return self._sentence_lens[batch_perm], batch_word_ids, batch_charseq_ids, batch_charseqs, batch_charseq_lens
 
     def write_sentence(self, output, index, overrides):

@@ -346,9 +346,13 @@ class AITilchi:
                     mask = np.random.binomial(n=1, p=args.char_dropout, size=charseqs[train.FORMS].shape)
                     charseqs[train.FORMS] = (1 - mask) * charseqs[train.FORMS] + mask * train.factors[train.FORMS].alphabet_map["<unk>"]
 
-                feeds = {self.is_training: True, self.learning_rate: learning_rate, self.sentence_lens: sentence_lens,
-                         self.charseqs: charseqs[train.FORMS], self.charseq_lens: charseq_lens[train.FORMS],
-                         self.word_ids: word_ids[train.FORMS], self.charseq_ids: charseq_ids[train.FORMS]}
+                feeds = {self.is_training: True, 
+                         self.learning_rate: learning_rate, 
+                         self.sentence_lens: sentence_lens,
+                         self.charseqs: charseqs[train.FORMS], 
+                         self.charseq_lens: charseq_lens[train.FORMS],
+                         self.word_ids: word_ids[train.FORMS], 
+                         self.charseq_ids: charseq_ids[train.FORMS]}
                 if train.variants > 1:
                     feeds[self.variants] = word_ids[train.VARIANT]
                 if train.embeddings_size:
